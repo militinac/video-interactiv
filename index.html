@@ -1,55 +1,110 @@
-<script>
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-document.body.appendChild(tag);
-
-var player;
-
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player('player', {
-    height: '400',
-    width: '100%',
-    videoId: 'M7lc1UVf-VE' // pune ID-ul tău aici
-  });
-
-  setInterval(checkTime, 1000);
-}
-
-var score = 0;
-var currentQuestion = null;
-
-var questions = [
-  { time: 5, id: "q1", shown: false },
-  { time: 10, id: "q2", shown: false }
-];
-
-function checkTime() {
-  if (!player || !player.getCurrentTime) return;
-
-  var t = Math.floor(player.getCurrentTime());
-
-  for (var i = 0; i < questions.length; i++) {
-    var q = questions[i];
-
-    if (t === q.time && !q.shown) {
-      q.shown = true;
-      player.pauseVideo();
-      currentQuestion = q.id;
-      document.getElementById(q.id).style.display = "block";
-      break;
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Interactiv</title>
+  <style>
+    #player {
+      margin: 20px auto;
+      max-width: 640px;
+      width: 100%;
+      height: 360px;
     }
-  }
-}
+    .question {
+      display: none;
+      margin: 20px auto;
+      max-width: 640px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      text-align: center;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">Video Interactiv</h2>
 
-function answer(correct){
-  if(correct) score++;
+  <div id="player"></div>
 
-  document.getElementById(currentQuestion).style.display = "none";
-  player.playVideo();
+  <div id="q1" class="question">
+    <p>Întrebarea 1: Care este răspunsul corect?</p>
+    <button onclick="answer(true)">Răspuns corect</button>
+    <button onclick="answer(false)">Răspuns greșit</button>
+  </div>
 
-  if(questions.every(q => q.shown)){
-    document.getElementById("result").innerHTML =
-      "Scor: " + score + "/" + questions.length;
-  }
-}
-</script>
+  <div id="q2" class="question">
+    <p>Întrebarea 2: Alege varianta corectă</p>
+    <button onclick="answer(false)">Greșit</button>
+    <button onclick="answer(true)">Corect</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+
+    var player;
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: 'M7lc1UVf-VE' // Pune aici ID-ul video YouTube dorit
+      });
+
+      setInterval(checkTime, 1000);
+    }
+
+    var score = 0;
+    var currentQuestion = null;
+
+    var questions = [
+      { time: 5, id: "q1", shown: false },
+      { time: 10, id: "q2", shown: false }
+    ];
+
+    function checkTime() {
+      if (!player || !player.getCurrentTime) return;
+
+      var t = Math.floor(player.getCurrentTime());
+
+      for (var i = 0; i < questions.length; i++) {
+        var q = questions[i];
+
+        if (t === q.time && !q.shown) {
+          q.shown = true;
+          player.pauseVideo();
+          currentQuestion = q.id;
+          document.getElementById(q.id).style.display = "block";
+          break;
+        }
+      }
+    }
+
+    function answer(correct){
+      if(correct) score++;
+
+      document.getElementById(currentQuestion).style.display = "none";
+      player.playVideo();
+
+      if(questions.every(q => q.shown)){
+        document.getElementById("result").innerHTML =
+          "Scor: " + score + "/" + questions.length;
+      }
+    }
+  </script>
+</body>
+</html>
