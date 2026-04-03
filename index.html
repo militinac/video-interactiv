@@ -1,83 +1,44 @@
-<!DOCTYPE html>
-<html lang="ro">
-<head>
-<meta charset="UTF-8">
-<title>Video Interactiv</title>
-
-<style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background: #f4f4f4;
-}
-.question {
-  display: none;
-  background: white;
-  padding: 20px;
-  margin: 20px auto;
-  width: 60%;
-  border-radius: 10px;
-}
-button {
-  margin: 10px;
-  padding: 10px;
-}
-</style>
-
-<script src="https://www.youtube.com/iframe_api"></script>
-</head>
-
-<body>
-
-<h2>Video Interactiv</h2>
-
-<div id="player"></div>
-
-<div id="q1" class="question">
-  <p>Ce este inerția?</p>
-  <button onclick="answer(true)">Corect</button>
-  <button onclick="answer(false)">Greșit</button>
-</div>
-
-<div id="q2" class="question">
-  <p>De ce te miști înainte?</p>
-  <button onclick="answer(true)">Inerție</button>
-  <button onclick="answer(false)">Alt motiv</button>
-</div>
-
-<div id="result"></div>
-
 <script>
-let player;
-let score = 0;
-let currentQuestion = null;
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.body.appendChild(tag);
 
-let questions = [
-  { time: 5, id: "q1", shown: false },
-  { time: 10, id: "q2", shown: false }
-];
+var player;
 
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
-    height: '360',
-    width: '640',
-    videoId: 'cQwBZFkRLKs&t=180s'
+    height: '400',
+    width: '100%',
+    videoId: 'M7lc1UVf-VE' // pune ID-ul tău aici
   });
 
   setInterval(checkTime, 1000);
 }
 
-function checkTime() {
-  let t = Math.floor(player.getCurrentTime());
+var score = 0;
+var currentQuestion = null;
 
-  questions.forEach(q => {
+var questions = [
+  { time: 5, id: "q1", shown: false },
+  { time: 10, id: "q2", shown: false }
+];
+
+function checkTime() {
+  if (!player || !player.getCurrentTime) return;
+
+  var t = Math.floor(player.getCurrentTime());
+
+  for (var i = 0; i < questions.length; i++) {
+    var q = questions[i];
+
     if (t === q.time && !q.shown) {
       q.shown = true;
       player.pauseVideo();
       currentQuestion = q.id;
       document.getElementById(q.id).style.display = "block";
+      break;
     }
-  });
+  }
 }
 
 function answer(correct){
@@ -92,6 +53,3 @@ function answer(correct){
   }
 }
 </script>
-
-</body>
-</html>
