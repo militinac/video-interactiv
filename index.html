@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Video Interactiv</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
     #player {
       margin: 20px auto;
       max-width: 640px;
@@ -18,25 +23,26 @@
       padding: 10px;
       border: 1px solid #ccc;
       background: #f9f9f9;
-      text-align: center;
     }
     button {
       margin: 5px;
       padding: 10px 15px;
       font-size: 16px;
+      cursor: pointer;
     }
     #result {
       margin-top: 20px;
       font-weight: bold;
-      text-align: center;
     }
   </style>
 </head>
 <body>
-  <h2 style="text-align:center;">Video Interactiv</h2>
+  <h2>Video Interactiv</h2>
 
+  <!-- Locul unde va fi încărcat playerul YouTube -->
   <div id="player"></div>
 
+  <!-- Întrebările care apar la anumite momente -->
   <div id="q1" class="question">
     <p>Întrebarea 1: Care este răspunsul corect?</p>
     <button onclick="answer(true)">Răspuns corect</button>
@@ -52,22 +58,12 @@
   <div id="result"></div>
 
   <script>
+    // Încarcă API-ul YouTube IFrame
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
-    document.body.appendChild(tag);
+    document.head.appendChild(tag);
 
     var player;
-
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        height: '360',
-        width: '640',
-        videoId: 'M7lc1UVf-VE' // Pune aici ID-ul video YouTube dorit
-      });
-
-      setInterval(checkTime, 1000);
-    }
-
     var score = 0;
     var currentQuestion = null;
 
@@ -75,6 +71,23 @@
       { time: 5, id: "q1", shown: false },
       { time: 10, id: "q2", shown: false }
     ];
+
+    // Funcția apelată de API când este gata
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: 'M7lc1UVf-VE', // schimbă cu ID-ul video-ului tău
+        events: {
+          'onReady': onPlayerReady
+        }
+      });
+    }
+
+    // După ce playerul este gata, pornește intervalul de verificare a timpului
+    function onPlayerReady(event) {
+      setInterval(checkTime, 500);
+    }
 
     function checkTime() {
       if (!player || !player.getCurrentTime) return;
@@ -102,7 +115,7 @@
 
       if(questions.every(q => q.shown)){
         document.getElementById("result").innerHTML =
-          "Scor: " + score + "/" + questions.length;
+          "Scor: " + score + " / " + questions.length;
       }
     }
   </script>
