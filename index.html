@@ -10,15 +10,51 @@ body {
   text-align: center;
   background: #f4f4f4;
 }
-#player { margin: 20px auto; }
-.accordion { width: 80%; margin: 20px auto; }
-.accordion-item { background: white; border-radius: 10px; margin-bottom: 10px; padding: 10px; }
-.accordion-header { cursor: pointer; font-weight: bold; padding: 10px; background: #eee; border-radius: 5px; }
-.accordion-body { display: none; padding: 10px; text-align: left; }
-button { margin: 5px; padding: 8px 12px; }
-.correct { background-color: #d4edda; color: #155724; }
-.wrong { background-color: #f8d7da; color: #721c24; }
-.feedback { margin-top: 10px; font-weight: bold; }
+
+/* Player */
+#player {
+  margin: 20px auto;
+}
+
+/* Accordion */
+.accordion-item {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: #fff;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+.accordion-header {
+  background: #f2f2f2;
+  padding: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.accordion-body {
+  display: none;
+  padding: 10px;
+}
+
+/* Checkbox feedback */
+.correct {
+  background-color: #c8e6c9; /* verde */
+}
+.wrong {
+  background-color: #ffcdd2; /* rosu */
+}
+
+/* Buton */
+button {
+  margin: 5px 0;
+  padding: 8px 12px;
+}
+.feedback {
+  margin-top: 10px;
+  font-weight: bold;
+}
 </style>
 
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -27,42 +63,35 @@ button { margin: 5px; padding: 8px 12px; }
 <body>
 
 <h2>Video Interactiv</h2>
-
 <div id="player"></div>
 
-<div class="accordion" id="questionsAccordion">
-
-  <!-- Întrebarea 1 -->
-  <div class="accordion-item" id="q1">
-    <div class="accordion-header" onclick="toggleAccordion('body1')">
-      1. Ce proprietăți are inerția?
-    </div>
-    <div class="accordion-body" id="body1">
-      <label><input type="checkbox" class="q1-answer" data-correct="true"> Păstrează starea de mișcare</label><br>
-      <label><input type="checkbox" class="q1-answer" data-correct="true"> Păstrează starea de repaus</label><br>
-      <label><input type="checkbox" class="q1-answer" data-correct="false"> Schimbă viteza spontan</label><br>
-      <button onclick="checkAnswer('q1')">Trimite răspuns</button>
-      <div class="feedback" id="feedback-q1"></div>
-    </div>
+<!-- Întrebări accordion -->
+<div id="q1" class="accordion-item">
+  <div class="accordion-header" onclick="toggleAccordion('body1')">
+    1. Ce este inerția?
   </div>
-
-  <!-- Întrebarea 2 -->
-  <div class="accordion-item" id="q2">
-    <div class="accordion-header" onclick="toggleAccordion('body2')">
-      2. De ce te miști înainte în autobuz când frânează?
-    </div>
-    <div class="accordion-body" id="body2">
-      <label><input type="checkbox" class="q2-answer" data-correct="true"> Datorită inerției</label><br>
-      <label><input type="checkbox" class="q2-answer" data-correct="false"> Pentru că autobuzul accelerează</label><br>
-      <label><input type="checkbox" class="q2-answer" data-correct="false"> Din cauza pasagerilor din față</label><br>
-      <button onclick="checkAnswer('q2')">Trimite răspuns</button>
-      <div class="feedback" id="feedback-q2"></div>
-    </div>
+  <div class="accordion-body" id="body1">
+    <label><input type="checkbox" class="q1-answer" data-correct="true"> Păstrează starea de mișcare</label><br>
+    <label><input type="checkbox" class="q1-answer" data-correct="true"> Păstrează starea de repaus</label><br>
+    <label><input type="checkbox" class="q1-answer" data-correct="false"> Schimbă viteza spontan</label><br>
+    <button onclick="checkAnswer('q1')">Trimite răspuns</button>
+    <div class="feedback" id="feedback-q1"></div>
   </div>
-
 </div>
 
-<div id="result"></div>
+<div id="q2" class="accordion-item">
+  <div class="accordion-header" onclick="toggleAccordion('body2')">
+    2. De ce te miști înainte?
+  </div>
+  <div class="accordion-body" id="body2">
+    <label><input type="checkbox" class="q2-answer" data-correct="true"> Inerție</label><br>
+    <label><input type="checkbox" class="q2-answer" data-correct="false"> Alt motiv</label><br>
+    <button onclick="checkAnswer('q2')">Trimite răspuns</button>
+    <div class="feedback" id="feedback-q2"></div>
+  </div>
+</div>
+
+<div id="result" style="margin-top:20px; font-weight:bold;"></div>
 
 <script>
 let player;
@@ -74,7 +103,7 @@ let questions = [
   { time: 10, id: "q2", shown: false }
 ];
 
-// YouTube API
+/* YouTube Player */
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '360',
@@ -82,64 +111,62 @@ function onYouTubeIframeAPIReady() {
     videoId: 'YZY74HLqJ4Y'
   });
 
-  // Verifică timpul video la fiecare 500ms
-  setInterval(checkTime, 500);
+  setInterval(checkTime, 1000);
 }
 
-// Accordion toggle
+/* Accordion toggle */
 function toggleAccordion(id) {
-  const body = document.getElementById(id);
-  body.style.display = (body.style.display === 'block') ? 'none' : 'block';
+  const el = document.getElementById(id);
+  el.style.display = (el.style.display === 'block') ? 'none' : 'block';
 }
 
-// Oprirea video și afișarea întrebării
+/* Verificare moment video */
 function checkTime() {
   if (!player || !player.getCurrentTime) return;
-  const t = Math.floor(player.getCurrentTime());
+
+  let t = Math.floor(player.getCurrentTime());
+
   questions.forEach(q => {
     if (t === q.time && !q.shown) {
       q.shown = true;
-      currentQuestion = q.id;
-      document.getElementById(q.id).querySelector('.accordion-body').style.display = 'block';
       player.pauseVideo();
-      alert("Video oprit. Răspunde la întrebare!");
+      currentQuestion = q.id;
+      document.getElementById("body" + q.id.slice(1)).style.display = "block";
     }
   });
 }
 
-// Verificarea răspunsurilor multiple
-function checkAnswer(qId) {
-  const answers = document.querySelectorAll(`.${qId}-answer`);
-  let correct = true;
-  answers.forEach(input => {
-    const isChecked = input.checked;
-    const isCorrect = input.getAttribute('data-correct') === "true";
-    if(isChecked !== isCorrect) correct = false;
-    input.parentElement.className = '';
-    if(isCorrect) input.parentElement.classList.add('correct');
-    else if(isChecked && !isCorrect) input.parentElement.classList.add('wrong');
+/* Verificare răspunsuri checkbox */
+function checkAnswer(qid) {
+  let inputs = document.querySelectorAll(`.${qid}-answer`);
+  let feedback = document.getElementById("feedback-" + qid);
+  let allCorrect = true;
+
+  inputs.forEach(inp => {
+    inp.parentElement.classList.remove('correct', 'wrong');
+    if ((inp.checked && inp.dataset.correct === "true") ||
+        (!inp.checked && inp.dataset.correct === "false")) {
+      inp.parentElement.classList.add('correct');
+    } else {
+      inp.parentElement.classList.add('wrong');
+      allCorrect = false;
+    }
   });
 
-  const feedbackDiv = document.getElementById('feedback-' + qId);
-  if(correct) {
-    feedbackDiv.innerText = "Răspuns corect!";
-    score++;
-  } else {
-    feedbackDiv.innerText = "Răspuns greșit! Corect este marcat verde.";
+  feedback.innerHTML = allCorrect ? "Răspuns corect!" : "Răspuns greșit! Vezi verdele pentru corect.";
+  
+  if(allCorrect) score++;
+
+  // video pornit manual pentru a constientiza feedback-ul
+  // puteți activa automat dacă vreți: player.playVideo();
+  
+  // ascundem întrebarea după răspuns
+  // document.getElementById("body" + qid.slice(1)).style.display = "none";
+
+  // Verificăm scor final
+  if(questions.every(q => q.shown)){
+    document.getElementById("result").innerHTML = "Scor: " + score + "/" + questions.length;
   }
-
-  // Dezactivează inputurile și butonul
-  answers.forEach(input => input.disabled = true);
-  feedbackDiv.previousElementSibling.disabled = true;
-
-  // Alertă să pornească video
-  alert("Apasă Play pentru a continua video-ul!");
-  showResult();
-}
-
-// Afișarea scorului final
-function showResult() {
-  document.getElementById("result").innerHTML = "Scor: " + score + "/" + questions.length;
 }
 </script>
 
